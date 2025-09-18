@@ -22,6 +22,7 @@ export const translations: Record<"ar" | "fr", Translation> = {
       fast: "توصيل سريع",
     },
     orderNow: "اطلب الآن",
+    trustedBy: "يثق بنا",
 
     // Form
     formTitle: "اطلب ورق البسطيلة",
@@ -82,6 +83,7 @@ export const translations: Record<"ar" | "fr", Translation> = {
       fast: "Livraison Rapide",
     },
     orderNow: "Commander Maintenant",
+    trustedBy: "Ils nous font confiance",
 
     // Form
     formTitle: "Commander les Feuilles de Bastilla",

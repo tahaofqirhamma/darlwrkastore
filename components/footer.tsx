@@ -21,7 +21,7 @@ export function Footer({ t, currentLanguage }: FooterProps) {
           <p className="text-background/70 text-sm mb-4">{t.storeSubtitle}</p>
           <p
             className={`text-background/70 text-center text-xs leading-relaxed ${
-              currentLanguage === "ar" ? "text-right" : ""
+              currentLanguage === "ar" ? "text-center" : ""
             }`}
           >
             {t.footerDescription}
@@ -32,7 +32,7 @@ export function Footer({ t, currentLanguage }: FooterProps) {
         <div className="text-center mb-6">
           <h5
             className={`font-semibold text-lg text-center mb-3 ${
-              currentLanguage === "ar" ? "font-serif" : ""
+              currentLanguage === "ar" ? "font-serif " : ""
             }`}
           >
             {t.contactTitle}

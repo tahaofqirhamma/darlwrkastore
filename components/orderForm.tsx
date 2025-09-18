@@ -1,7 +1,5 @@
 "use client";
 
-import type React from "react";
-
 import { useState, useEffect } from "react";
 import type { Translation, Language, Size } from "@/lib/types";
 
@@ -11,6 +9,9 @@ interface OrderFormProps {
 }
 
 export function OrderForm({ t, currentLanguage }: OrderFormProps) {
+  const [name, setName] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
+  const [address, setAddress] = useState<string>("");
   const [selectedFormSize, setSelectedFormSize] = useState<Size>("big");
   const [deliveryType, setDeliveryType] = useState("pickup");
   const [deliveryZone, setDeliveryZone] = useState("");
@@ -56,6 +57,16 @@ export function OrderForm({ t, currentLanguage }: OrderFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log({
+      name,
+      phone,
+      address,
+      selectedFormSize,
+      deliveryType,
+      deliveryZone,
+      quantity,
+      totalCost,
+    });
     alert(t.orderSuccess);
   };
 
@@ -65,7 +76,7 @@ export function OrderForm({ t, currentLanguage }: OrderFormProps) {
         <div className="text-center mb-6">
           <h3
             className={`text-2xl font-bold text-center mb-2 ${
-              currentLanguage === "ar" ? "font-serif text-right" : ""
+              currentLanguage === "ar" ? "font-serif text-center" : ""
             }`}
           >
             {t.formTitle}
@@ -86,6 +97,8 @@ export function OrderForm({ t, currentLanguage }: OrderFormProps) {
                 type="text"
                 id="name"
                 name="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 required
                 className={`bg-input border-2 border-border focus:border-primary focus:ring-2 focus:ring-primary/20 w-full px-4 py-3 rounded-lg transition-all outline-none ${
                   currentLanguage === "ar" ? "text-right" : ""
@@ -106,6 +119,8 @@ export function OrderForm({ t, currentLanguage }: OrderFormProps) {
                 type="tel"
                 id="phone"
                 name="phone"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
                 required
                 className={`bg-input border-2 border-border focus:border-primary focus:ring-2 focus:ring-primary/20 w-full px-4 py-3 rounded-lg transition-all outline-none ${
                   currentLanguage === "ar" ? "text-right" : ""
@@ -116,7 +131,11 @@ export function OrderForm({ t, currentLanguage }: OrderFormProps) {
 
             {/* Size Selection */}
             <div>
-              <label className="block text-foreground font-semibold mb-2 text-sm">
+              <label
+                className={`block text-foreground font-semibold mb-2 text-sm ${
+                  currentLanguage === "ar" ? "text-right" : ""
+                }`}
+              >
                 {t.sizeLabel}
               </label>
               <div className="grid grid-cols-2 gap-3">
@@ -125,7 +144,7 @@ export function OrderForm({ t, currentLanguage }: OrderFormProps) {
                     selectedFormSize === "big"
                       ? "border-primary bg-primary/10"
                       : "border-border hover:border-primary"
-                  }`}
+                  } `}
                   onClick={() => setSelectedFormSize("big")}
                 >
                   <div
@@ -165,7 +184,9 @@ export function OrderForm({ t, currentLanguage }: OrderFormProps) {
             <div>
               <label
                 htmlFor="quantity"
-                className="block text-foreground font-semibold mb-2 text-sm"
+                className={`block text-foreground font-semibold mb-2 text-sm ${
+                  currentLanguage === "ar" ? "text-right" : ""
+                }`}
               >
                 {t.quantityLabel}
               </label>
@@ -190,7 +211,9 @@ export function OrderForm({ t, currentLanguage }: OrderFormProps) {
             <div>
               <label
                 htmlFor="deliveryDate"
-                className="block text-foreground font-semibold mb-2 text-sm"
+                className={`block text-foreground font-semibold mb-2 text-sm ${
+                  currentLanguage === "ar" ? "text-right" : ""
+                }`}
               >
                 {t.dateLabel}
               </label>
@@ -208,7 +231,9 @@ export function OrderForm({ t, currentLanguage }: OrderFormProps) {
             <div>
               <label
                 htmlFor="deliveryTime"
-                className="block text-foreground font-semibold mb-2 text-sm"
+                className={`block text-foreground font-semibold mb-2 text-sm ${
+                  currentLanguage === "ar" ? "text-right" : ""
+                }`}
               >
                 {t.timeLabel}
               </label>
@@ -226,7 +251,9 @@ export function OrderForm({ t, currentLanguage }: OrderFormProps) {
             <div>
               <label
                 htmlFor="deliveryType"
-                className="block text-foreground font-semibold mb-2 text-sm"
+                className={`block text-foreground font-semibold mb-2 text-sm ${
+                  currentLanguage === "ar" ? "text-right" : ""
+                }`}
               >
                 {t.deliveryLabel}
               </label>
@@ -249,7 +276,9 @@ export function OrderForm({ t, currentLanguage }: OrderFormProps) {
               <div>
                 <label
                   htmlFor="deliveryZone"
-                  className="block text-foreground font-semibold mb-2 text-sm"
+                  className={`block text-foreground font-semibold mb-2 text-sm ${
+                    currentLanguage === "ar" ? "text-right" : ""
+                  }`}
                 >
                   {t.zoneLabel}
                 </label>
@@ -274,13 +303,17 @@ export function OrderForm({ t, currentLanguage }: OrderFormProps) {
               <div className={currentLanguage === "ar" ? "text-right" : ""}>
                 <label
                   htmlFor="address"
-                  className="block text-foreground font-semibold mb-2 text-sm"
+                  className={`block text-foreground font-semibold mb-2 text-sm ${
+                    currentLanguage === "ar" ? "text-right" : ""
+                  }`}
                 >
                   {t.addressLabel}
                 </label>
                 <textarea
                   id="address"
                   name="address"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
                   rows={3}
                   className={`bg-input border-2 border-border focus:border-primary focus:ring-2 focus:ring-primary/20 w-full px-4 py-3 rounded-lg resize-none transition-all outline-none ${
                     currentLanguage === "ar" ? "text-right" : ""
@@ -295,7 +328,9 @@ export function OrderForm({ t, currentLanguage }: OrderFormProps) {
               <div>
                 <label
                   htmlFor="cost"
-                  className="block text-foreground font-semibold mb-2 text-sm"
+                  className={`block text-foreground font-semibold mb-2 text-sm ${
+                    currentLanguage === "ar" ? "text-right" : ""
+                  }`}
                 >
                   {t.totalLabel}
                 </label>

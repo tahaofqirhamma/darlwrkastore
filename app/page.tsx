@@ -7,6 +7,7 @@ import { Footer } from "@/components/footer";
 import { OrderForm } from "@/components/orderForm";
 import { translations } from "@/lib/translations";
 import type { Language, Size } from "@/lib/types";
+import { ClientLogos } from "@/components/client-logos";
 
 import img1 from "@/public/assets/img1.png";
 import img2 from "@/public/assets/img2.png";
@@ -61,7 +62,7 @@ export default function LandingPage() {
       </div>
 
       {/* Hero Section */}
-      <section className="py-8 bg-gradient-to-br from-secondary to-background relative">
+      <section className="py-8 bg-gradient-to-br from-secondary to-white relative">
         <div className="max-w-full px-4 md:max-w-md md:mx-auto">
           {/* Product Image Carousel */}
           <div className="relative mb-6">
@@ -92,7 +93,7 @@ export default function LandingPage() {
             <div className="text-center">
               <h2
                 className={`text-3xl font-bold text-center mb-4 ${
-                  currentLanguage === "ar" ? "font-serif text-right" : ""
+                  currentLanguage === "ar" ? "font-serif text-center" : ""
                 }`}
               >
                 {t.productTitle}
@@ -143,7 +144,7 @@ export default function LandingPage() {
 
             <p
               className={`text-muted-foreground text-center text-sm leading-relaxed ${
-                currentLanguage === "ar" ? "text-right" : ""
+                currentLanguage === "ar" ? "text-center" : ""
               }`}
             >
               {t.description}
@@ -177,6 +178,7 @@ export default function LandingPage() {
           </a>
         </div>
       </section>
+      <ClientLogos t={t} currentLanguage={currentLanguage} />
 
       <OrderForm t={t} currentLanguage={currentLanguage} />
       <Footer t={t} currentLanguage={currentLanguage} />

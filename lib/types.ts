@@ -18,6 +18,7 @@ export interface Translation {
     fast: string;
   };
   orderNow: string;
+  trustedBy: string;
 
   // Form
   formTitle: string;
