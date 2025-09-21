@@ -3,6 +3,8 @@ import { StatsCards } from "@/components/stats-cards";
 import { OrdersTable } from "@/components/orders-table";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
+import { Button } from "@/components/ui/button";
+import { logout } from "../login/actions";
 export default async function StoreDashboard() {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getUser();
@@ -12,6 +14,9 @@ export default async function StoreDashboard() {
   return (
     <div className="min-h-screen bg-background">
       <p>Hello {data.user.email}</p>
+      <form action={logout}>
+        <Button type="submit">Logout</Button>
+      </form>
 
       <StoreHeader />
       <main className="container mx-auto px-4 py-8 space-y-8">
