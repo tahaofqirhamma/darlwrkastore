@@ -1,7 +1,8 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import type { Translation, Language, Size } from "@/lib/types";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { placeOrder } from "@/actions";
+import { Language, Translation } from "@/lib/types";
+import { PlaceOrderDTO } from "@/lib/actions/utils";
 
 interface OrderFormProps {
   t: Translation;
@@ -9,65 +10,66 @@ interface OrderFormProps {
 }
 
 export function OrderForm({ t, currentLanguage }: OrderFormProps) {
-  const [name, setName] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
-  const [address, setAddress] = useState<string>("");
-  const [selectedFormSize, setSelectedFormSize] = useState<Size>("big");
-  const [deliveryType, setDeliveryType] = useState("pickup");
-  const [deliveryZone, setDeliveryZone] = useState("");
-  const [quantity, setQuantity] = useState(1);
-  const [showDeliveryZone, setShowDeliveryZone] = useState(false);
-  const [showAddress, setShowAddress] = useState(false);
-  const [totalCost, setTotalCost] = useState("");
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<PlaceOrderDTO>({
+    defaultValues: {
+      name: "",
+      phoneNumber: "",
+      address: "",
+      isBig: true,
+      quantity: 1,
+      estimatedDate: new Date().toString(),
+      isDelivery: false,
+      zone: "",
+      totalCost: 0.0,
+      fees: 0.0,
+    },
+  });
 
-  // Update cost calculation
+  const [totalCostDisplay, setTotalCostDisplay] = useState("");
+
+  // watch form values
+  const isBig = watch("isBig");
+  const quantity = watch("quantity");
+  const isDelivery = watch("isDelivery");
+  const zone = watch("zone");
+
+  // Calculate total cost dynamically
   useEffect(() => {
-    const qty = quantity || 1;
-    const pricePerKg = selectedFormSize === "big" ? 30 : 35;
-    const subtotal = qty * pricePerKg;
+    const pricePerKg = isBig ? 30 : 35;
+    const subtotal = quantity * pricePerKg;
 
     let deliveryFee = 0;
-    if (deliveryType === "delivery" && deliveryZone) {
-      deliveryFee = deliveryZone === "rabat" ? 15 : 25;
+    if (isDelivery && zone) {
+      deliveryFee = zone === "rabat" ? 20 : 25;
     }
 
     const total = subtotal + deliveryFee;
-    setTotalCost(`${total.toFixed(2)} ${t.currency}`);
-  }, [quantity, selectedFormSize, deliveryType, deliveryZone, t.currency]);
 
-  // Handle delivery type change
-  useEffect(() => {
-    if (deliveryType === "delivery") {
-      setShowDeliveryZone(true);
-    } else {
-      setShowDeliveryZone(false);
-      setShowAddress(false);
-      setDeliveryZone("");
+    // Update form values
+    setValue("fees", deliveryFee);
+    setValue("totalCost", total);
+
+    // Update display
+    setTotalCostDisplay(`${total.toFixed(2)} ${t.currency}`);
+  }, [isBig, quantity, isDelivery, zone, t.currency, setValue]);
+
+  // onSubmit handler
+  const onSubmit = async (data: PlaceOrderDTO) => {
+    try {
+      const response = await placeOrder(data);
+      alert(response.msg);
+      reset();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to place order.");
     }
-  }, [deliveryType]);
-
-  // Handle delivery zone change
-  useEffect(() => {
-    if (deliveryZone) {
-      setShowAddress(true);
-    } else {
-      setShowAddress(false);
-    }
-  }, [deliveryZone]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log({
-      name,
-      phone,
-      address,
-      selectedFormSize,
-      deliveryType,
-      deliveryZone,
-      quantity,
-      totalCost,
-    });
-    alert(t.orderSuccess);
   };
 
   return (
@@ -84,95 +86,67 @@ export function OrderForm({ t, currentLanguage }: OrderFormProps) {
         </div>
 
         <div className="bg-card rounded-2xl shadow-lg border p-6">
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {/* Name */}
             <div className={currentLanguage === "ar" ? "text-right" : ""}>
-              <label
-                htmlFor="name"
-                className="block text-foreground font-semibold mb-2 text-sm"
-              >
+              <label className="block text-foreground font-semibold mb-2 text-sm">
                 {t.nameLabel} *
               </label>
               <input
                 type="text"
-                id="name"
-                name="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className={`bg-input border-2 border-border focus:border-primary focus:ring-2 focus:ring-primary/20 w-full px-4 py-3 rounded-lg transition-all outline-none ${
+                {...register("name", { required: true })}
+                className={`bg-input border-2 border-border w-full px-4 py-3 rounded-lg ${
                   currentLanguage === "ar" ? "text-right" : ""
                 }`}
                 placeholder={t.namePlaceholder}
               />
+              {errors.name && (
+                <span className="text-red-500 text-sm">{t.requiredField}</span>
+              )}
             </div>
 
             {/* Phone */}
             <div className={currentLanguage === "ar" ? "text-right" : ""}>
-              <label
-                htmlFor="phone"
-                className="block text-foreground font-semibold mb-2 text-sm"
-              >
+              <label className="block text-foreground font-semibold mb-2 text-sm">
                 {t.phoneLabel} *
               </label>
               <input
                 type="tel"
-                id="phone"
-                name="phone"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                required
-                className={`bg-input border-2 border-border focus:border-primary focus:ring-2 focus:ring-primary/20 w-full px-4 py-3 rounded-lg transition-all outline-none ${
+                {...register("phoneNumber", { required: true })}
+                className={`bg-input border-2 border-border w-full px-4 py-3 rounded-lg ${
                   currentLanguage === "ar" ? "text-right" : ""
                 }`}
                 placeholder="+212 6XX XXX XXX"
               />
+              {errors.phoneNumber && (
+                <span className="text-red-500 text-sm">{t.requiredField}</span>
+              )}
             </div>
 
-            {/* Size Selection */}
+            {/* Size */}
             <div>
-              <label
-                className={`block text-foreground font-semibold mb-2 text-sm ${
-                  currentLanguage === "ar" ? "text-right" : ""
-                }`}
-              >
+              <label className="block text-foreground font-semibold mb-2 text-sm">
                 {t.sizeLabel}
               </label>
               <div className="grid grid-cols-2 gap-3">
                 <div
-                  className={`border-2 rounded-xl p-4 cursor-pointer transition-all text-center ${
-                    selectedFormSize === "big"
-                      ? "border-primary bg-primary/10"
-                      : "border-border hover:border-primary"
-                  } `}
-                  onClick={() => setSelectedFormSize("big")}
+                  className={`border-2 rounded-xl p-4 cursor-pointer text-center ${
+                    isBig ? "border-primary bg-primary/10" : "border-border"
+                  }`}
+                  onClick={() => setValue("isBig", true)}
                 >
-                  <div
-                    className={`text-sm font-semibold ${
-                      currentLanguage === "ar" ? "font-serif" : ""
-                    }`}
-                  >
-                    {t.sizeBig}
-                  </div>
+                  <div className="text-sm font-semibold">{t.sizeBig}</div>
                   <div className="text-sm font-bold text-primary mt-1">
                     {t.priceBig}
                   </div>
                 </div>
                 <div
-                  className={`border-2 rounded-xl p-4 cursor-pointer transition-all text-center ${
-                    selectedFormSize === "small"
-                      ? "border-primary bg-primary/10"
-                      : "border-border hover:border-primary"
+                  className={`border-2 rounded-xl p-4 cursor-pointer text-center ${
+                    !isBig ? "border-primary bg-primary/10" : "border-border"
                   }`}
-                  onClick={() => setSelectedFormSize("small")}
+                  onClick={() => setValue("isBig", false)}
                 >
-                  <div
-                    className={`text-sm font-semibold ${
-                      currentLanguage === "ar" ? "font-serif" : ""
-                    }`}
-                  >
-                    {t.sizeSmall}
-                  </div>
+                  <div className="text-sm font-semibold">{t.sizeSmall}</div>
                   <div className="text-sm font-bold text-primary mt-1">
                     {t.priceSmall}
                   </div>
@@ -182,22 +156,12 @@ export function OrderForm({ t, currentLanguage }: OrderFormProps) {
 
             {/* Quantity */}
             <div>
-              <label
-                htmlFor="quantity"
-                className={`block text-foreground font-semibold mb-2 text-sm ${
-                  currentLanguage === "ar" ? "text-right" : ""
-                }`}
-              >
+              <label className="block text-foreground font-semibold mb-2 text-sm">
                 {t.quantityLabel}
               </label>
               <select
-                id="quantity"
-                name="quantity"
-                value={quantity}
-                onChange={(e) => setQuantity(Number.parseInt(e.target.value))}
-                className={`bg-input border-2 border-border focus:border-primary focus:ring-2 focus:ring-primary/20 w-full px-4 py-3 rounded-lg transition-all outline-none ${
-                  currentLanguage === "ar" ? "text-right" : ""
-                }`}
+                {...register("quantity", { valueAsNumber: true })}
+                className="bg-input border-2 border-border w-full px-4 py-3 rounded-lg"
               >
                 {[1, 2, 3, 5, 10].map((qty, index) => (
                   <option key={qty} value={qty}>
@@ -209,87 +173,50 @@ export function OrderForm({ t, currentLanguage }: OrderFormProps) {
 
             {/* Delivery Date */}
             <div>
-              <label
-                htmlFor="deliveryDate"
-                className={`block text-foreground font-semibold mb-2 text-sm ${
-                  currentLanguage === "ar" ? "text-right" : ""
-                }`}
-              >
+              <label className="block text-foreground font-semibold mb-2 text-sm">
                 {t.dateLabel}
               </label>
               <input
-                type="date"
-                id="deliveryDate"
-                name="deliveryDate"
-                className={`bg-input border-2 border-border focus:border-primary focus:ring-2 focus:ring-primary/20 w-full px-4 py-3 rounded-lg transition-all outline-none ${
-                  currentLanguage === "ar" ? "text-right" : ""
-                }`}
+                type="datetime-local"
+                {...register("estimatedDate", {
+                  required: true,
+                  valueAsDate: true,
+                })}
+                className="bg-input border-2 border-border w-full px-4 py-3 rounded-lg"
               />
-            </div>
-
-            {/* Delivery Time */}
-            <div>
-              <label
-                htmlFor="deliveryTime"
-                className={`block text-foreground font-semibold mb-2 text-sm ${
-                  currentLanguage === "ar" ? "text-right" : ""
-                }`}
-              >
-                {t.timeLabel}
-              </label>
-              <input
-                type="time"
-                id="deliveryTime"
-                name="deliveryTime"
-                className={`bg-input border-2 border-border focus:border-primary focus:ring-2 focus:ring-primary/20 w-full px-4 py-3 rounded-lg transition-all outline-none ${
-                  currentLanguage === "ar" ? "text-right" : ""
-                }`}
-              />
+              {errors.estimatedDate && (
+                <span className="text-red-500 text-sm">
+                  {errors.estimatedDate.message}
+                </span>
+              )}
             </div>
 
             {/* Delivery Type */}
             <div>
-              <label
-                htmlFor="deliveryType"
-                className={`block text-foreground font-semibold mb-2 text-sm ${
-                  currentLanguage === "ar" ? "text-right" : ""
-                }`}
-              >
+              <label className="block text-foreground font-semibold mb-2 text-sm">
                 {t.deliveryLabel}
               </label>
               <select
-                id="deliveryType"
-                name="deliveryType"
-                value={deliveryType}
-                onChange={(e) => setDeliveryType(e.target.value)}
-                className={`bg-input border-2 border-border focus:border-primary focus:ring-2 focus:ring-primary/20 w-full px-4 py-3 rounded-lg transition-all outline-none ${
-                  currentLanguage === "ar" ? "text-right" : ""
-                }`}
+                {...register("isDelivery")}
+                onChange={(e) =>
+                  setValue("isDelivery", e.target.value === "true")
+                }
+                className="bg-input border-2 border-border w-full px-4 py-3 rounded-lg"
               >
-                <option value="pickup">{t.pickupOption}</option>
-                <option value="delivery">{t.deliveryOption}</option>
+                <option value="false">{t.pickupOption}</option>
+                <option value="true">{t.deliveryOption}</option>
               </select>
             </div>
 
             {/* Delivery Zone */}
-            {showDeliveryZone && (
+            {isDelivery && (
               <div>
-                <label
-                  htmlFor="deliveryZone"
-                  className={`block text-foreground font-semibold mb-2 text-sm ${
-                    currentLanguage === "ar" ? "text-right" : ""
-                  }`}
-                >
+                <label className="block text-foreground font-semibold mb-2 text-sm">
                   {t.zoneLabel}
                 </label>
                 <select
-                  id="deliveryZone"
-                  name="deliveryZone"
-                  value={deliveryZone}
-                  onChange={(e) => setDeliveryZone(e.target.value)}
-                  className={`bg-input border-2 border-border focus:border-primary focus:ring-2 focus:ring-primary/20 w-full px-4 py-3 rounded-lg transition-all outline-none ${
-                    currentLanguage === "ar" ? "text-right" : ""
-                  }`}
+                  {...register("zone")}
+                  className="bg-input border-2 border-border w-full px-4 py-3 rounded-lg"
                 >
                   <option value="">{t.zoneSelect}</option>
                   <option value="rabat">{t.rabatZone}</option>
@@ -299,57 +226,37 @@ export function OrderForm({ t, currentLanguage }: OrderFormProps) {
             )}
 
             {/* Address */}
-            {showAddress && (
-              <div className={currentLanguage === "ar" ? "text-right" : ""}>
-                <label
-                  htmlFor="address"
-                  className={`block text-foreground font-semibold mb-2 text-sm ${
-                    currentLanguage === "ar" ? "text-right" : ""
-                  }`}
-                >
+            {isDelivery && zone && (
+              <div>
+                <label className="block text-foreground font-semibold mb-2 text-sm">
                   {t.addressLabel}
                 </label>
                 <textarea
-                  id="address"
-                  name="address"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
+                  {...register("address")}
                   rows={3}
-                  className={`bg-input border-2 border-border focus:border-primary focus:ring-2 focus:ring-primary/20 w-full px-4 py-3 rounded-lg resize-none transition-all outline-none ${
-                    currentLanguage === "ar" ? "text-right" : ""
-                  }`}
+                  className="bg-input border-2 border-border w-full px-4 py-3 rounded-lg resize-none"
                   placeholder={t.addressPlaceholder}
                 />
               </div>
             )}
 
             {/* Total Cost */}
-            {(deliveryType === "delivery" || deliveryType === "pickup") && (
-              <div>
-                <label
-                  htmlFor="cost"
-                  className={`block text-foreground font-semibold mb-2 text-sm ${
-                    currentLanguage === "ar" ? "text-right" : ""
-                  }`}
-                >
-                  {t.totalLabel}
-                </label>
-                <input
-                  type="text"
-                  id="cost"
-                  value={totalCost}
-                  readOnly
-                  className={`bg-primary/10 border-2 border-primary w-full px-4 py-3 rounded-lg font-bold text-primary ${
-                    currentLanguage === "ar" ? "text-right" : ""
-                  }`}
-                />
-              </div>
-            )}
+            <div>
+              <label className="block text-foreground font-semibold mb-2 text-sm">
+                {t.totalLabel}
+              </label>
+              <input
+                type="text"
+                value={totalCostDisplay}
+                readOnly
+                className="bg-primary/10 border-2 border-primary w-full px-4 py-3 rounded-lg font-bold text-primary"
+              />
+            </div>
 
             {/* Submit */}
             <button
               type="submit"
-              className="bg-primary hover:bg-primary/90 text-primary-foreground w-full py-4 rounded-xl text-lg font-semibold transition-all hover:shadow-lg"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground w-full py-4 rounded-xl text-lg font-semibold"
             >
               {t.submitButton}
             </button>

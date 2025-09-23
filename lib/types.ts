@@ -1,4 +1,7 @@
+import { ReactNode } from "react";
+
 export interface Translation {
+  requiredField: ReactNode;
   // Header
   storeName: string;
   storeSubtitle: string;
