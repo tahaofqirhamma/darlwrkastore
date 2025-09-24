@@ -1,5 +1,5 @@
 {
-  "id": "e6375afb-e9d9-4df2-8749-3d31129ad3f9",
+  "id": "58ec2140-56f6-4211-a9e4-53afdc0f3eac",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -12,7 +12,18 @@
           "name": "id",
           "type": "integer",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "client_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
         },
         "created_at": {
           "name": "created_at",
@@ -37,7 +48,7 @@
           "name": "address",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         }
       },
       "indexes": {},
@@ -56,7 +67,18 @@
           "name": "id",
           "type": "integer",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "delivery_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
         },
         "created_at": {
           "name": "created_at",
@@ -65,18 +87,24 @@
           "notNull": true,
           "default": "now()"
         },
-        "delivery_date": {
-          "name": "delivery_date",
+        "estimated_date": {
+          "name": "estimated_date",
           "type": "date",
           "primaryKey": false,
           "notNull": false
         },
-        "delivery_fees": {
-          "name": "delivery_fees",
+        "fees": {
+          "name": "fees",
           "type": "real",
           "primaryKey": false,
           "notNull": false,
           "default": "'0'"
+        },
+        "zone": {
+          "name": "zone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "order_id": {
           "name": "order_id",
@@ -115,7 +143,18 @@
           "name": "id",
           "type": "integer",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "order_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
         },
         "created_at": {
           "name": "created_at",

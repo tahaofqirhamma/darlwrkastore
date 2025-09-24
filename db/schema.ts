@@ -8,62 +8,63 @@ import {
   integer,
   timestamp,
   real,
-} from 'drizzle-orm/pg-core';
-import { relations, sql } from 'drizzle-orm';
+} from "drizzle-orm/pg-core";
+import { relations, sql } from "drizzle-orm";
 
 export const order = pgTable(
-  'order',
+  "order",
   {
-    id: integer().primaryKey(),
-    createdAt: date('created_at').defaultNow(),
-    updatedAt: date('updated_at'),
-    status: text().default('pending').notNull(),
-    isBig: boolean('is_big').default(false).notNull(),
+    id: integer().generatedAlwaysAsIdentity().primaryKey(),
+    createdAt: date("created_at").defaultNow(),
+    updatedAt: date("updated_at"),
+    status: text().default("pending").notNull(),
+    isBig: boolean("is_big").default(false).notNull(),
     quantity: doublePrecision().notNull(),
-    totalCost: doublePrecision('total_cost'),
-    clientId: integer('client_id').notNull(),
-    deliveryId: integer('delivery_id'),
+    totalCost: doublePrecision("total_cost"),
+    clientId: integer("client_id").notNull(),
+    deliveryId: integer("delivery_id"),
   },
   (table) => [
     foreignKey({
       columns: [table.clientId],
       foreignColumns: [client.id],
-      name: 'order_client_id_fkey',
+      name: "order_client_id_fkey",
     }),
   ]
 );
 
-export const client = pgTable('client', {
-  id: integer().primaryKey(),
-  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+export const client = pgTable("client", {
+  id: integer().generatedAlwaysAsIdentity().primaryKey(),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
     .defaultNow()
     .notNull(),
   name: text().notNull(),
-  phoneNumber: text('phone_number').notNull(),
-  address: text().notNull(),
+  phoneNumber: text("phone_number").notNull(),
+  address: text(),
 });
 
 export const delivery = pgTable(
-  'delivery',
+  "delivery",
   {
-    id: integer().primaryKey(),
-    createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' })
+    id: integer().generatedAlwaysAsIdentity().primaryKey(),
+    createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
       .defaultNow()
       .notNull(),
-    deliveryDate: date('delivery_date'),
-    deliveryFees: real('delivery_fees').default(sql`'0'`),
-    orderId: integer('order_id'),
+    estimatedDate: date("estimated_date"),
+    fees: real("fees").default(sql`'0'`),
+    zone: text("zone"),
+    orderId: integer("order_id"),
   },
   (table) => [
     foreignKey({
       columns: [table.orderId],
       foreignColumns: [order.id],
-      name: 'delivery_order_id_fkey',
+      name: "delivery_order_id_fkey",
     }),
   ]
 );
 
-const ordersRelations = relations(order, ({ one }) => ({
+export const ordersRelations = relations(order, ({ one }) => ({
   delivery: one(delivery),
   client: one(client, {
     fields: [order.clientId],
@@ -71,6 +72,11 @@ const ordersRelations = relations(order, ({ one }) => ({
   }),
 }));
 
-const clientRelation = relations(client, ({ many }) => ({
+export const clientRelation = relations(client, ({ many }) => ({
   orders: many(order),
 }));
+
+export type InsertClient = typeof client.$inferInsert;
+export type InsertOrder = typeof order.$inferInsert;
+export type InsertDelivery = typeof delivery.$inferInsert;
+export type SelectCLient = typeof client.$inferSelect;
