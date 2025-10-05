@@ -1,5 +1,5 @@
-import { Store, User } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Store, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export function StoreHeader() {
   return (
@@ -10,15 +10,13 @@ export function StoreHeader() {
             <Store className="h-6 w-6 text-primary-foreground" />
           </div>
           <div>
-            <h2 className="text-xl font-semibold text-card-foreground">Mon Magasin</h2>
+            <h2 className="text-xl font-semibold text-card-foreground">
+              Dar Lwrka
+            </h2>
             <p className="text-sm text-muted-foreground">Tableau de Bord</p>
           </div>
         </div>
-        <Button variant="outline" size="sm" className="gap-2 bg-transparent">
-          <User className="h-4 w-4" />
-          Profil
-        </Button>
       </div>
     </header>
-  )
+  );
 }

@@ -1,11 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, Eye, Edit, Trash2 } from "lucide-react";
+import {
+  Search,
+  Eye,
+  Edit,
+  Trash2,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import {
   Table,
   TableBody,
@@ -21,131 +28,165 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { fetchOrders, updateOrderStatus, deleteOrder } from "@/actions/admin";
+import { useStats } from "@/contexts/StatsContext";
 
-const orders = [
-  {
-    id: "CMD-001",
-    clientName: "Ahmed Benali",
-    phone: "+212 6 12 34 56 78",
-    address: "123 Rue Mohammed V, Rabat",
-    zone: "Rabat",
-    quantity: 2,
-    size: "petit",
-    deliveryDate: "2024-01-15",
-    deliveryTime: "14:00",
-    price: 450,
-    status: "livré",
-  },
-  {
-    id: "CMD-002",
-    clientName: "Fatima Zahra",
-    phone: "+212 6 87 65 43 21",
-    address: "456 Avenue Hassan II, Casablanca",
-    zone: "Hors Rabat",
-    quantity: 1,
-    size: "grand",
-    deliveryDate: "2024-01-16",
-    deliveryTime: "10:30",
-    price: 320,
-    status: "en attente",
-  },
-  {
-    id: "CMD-003",
-    clientName: "Omar Alami",
-    phone: "+212 6 55 44 33 22",
-    address: "789 Boulevard Zerktouni, Rabat",
-    zone: "Rabat",
-    quantity: 3,
-    size: "petit",
-    deliveryDate: "2024-01-14",
-    deliveryTime: "16:45",
-    price: 680,
-    status: "annulé",
-  },
-  {
-    id: "CMD-004",
-    clientName: "Aicha Mansouri",
-    phone: "+212 6 99 88 77 66",
-    address: "321 Rue Allal Ben Abdellah, Salé",
-    zone: "Hors Rabat",
-    quantity: 1,
-    size: "grand",
-    deliveryDate: "2024-01-17",
-    deliveryTime: "11:15",
-    price: 380,
-    status: "en attente",
-  },
-  {
-    id: "CMD-005",
-    clientName: "Youssef Idrissi",
-    phone: "+212 6 11 22 33 44",
-    address: "654 Avenue Moulay Youssef, Rabat",
-    zone: "Rabat",
-    quantity: 2,
-    size: "petit",
-    deliveryDate: "2024-01-13",
-    deliveryTime: "13:20",
-    price: 520,
-    status: "livré",
-  },
-];
+type OrderData = {
+  id: number;
+  status: string;
+  isBig: boolean;
+  quantity: number;
+  totalCost: number | null;
+  createdAt: string | null;
+  client: {
+    id: number;
+    name: string;
+    phoneNumber: string;
+    address: string | null;
+  };
+  delivery: {
+    id: number;
+    zone: string | null;
+    fees: number | null;
+    timeSlot: string | null;
+  } | null;
+};
 
 const statusColors = {
-  livré: "bg-accent text-accent-foreground",
-  "en attente": "bg-muted text-muted-foreground",
-  annulé: "bg-destructive text-destructive-foreground",
+  pending: "bg-muted text-muted-foreground",
+  delivered: "bg-accent text-accent-foreground",
+  cancelled: "bg-destructive text-destructive-foreground",
+};
+
+const statusLabels = {
+  pending: "En Attente",
+  delivered: "Livré",
+  cancelled: "Annulé",
+};
+
+const timeSlotLabels = {
+  morning: "Matin (08h-12h)",
+  afternoon: "Après-midi (12h-16h)",
+  evening: "Soir (16h-20h)",
 };
 
 export function OrdersTable() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("tous");
   const [zoneFilter, setZoneFilter] = useState("toutes");
-  const [ordersData, setOrdersData] = useState(orders);
+  const [ordersData, setOrdersData] = useState<OrderData[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleViewOrder = (orderId: string) => {
-    console.log("[v0] Viewing order:", orderId);
-    // Here you would typically open a modal or navigate to order details
-    alert(`Voir la commande ${orderId}`);
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+
+  const { refreshStats } = useStats();
+
+  // Fetch orders when page changes
+  useEffect(() => {
+    loadOrders(currentPage, pageSize);
+  }, [currentPage, pageSize]);
+
+  const loadOrders = async (page: number, size: number) => {
+    setLoading(true);
+    const result = await fetchOrders(page, size);
+    if (result.success && result.data) {
+      setOrdersData(result.data);
+      if (result.pagination) {
+        setTotalPages(result.pagination.totalPages);
+        setTotalCount(result.pagination.totalCount);
+      }
+    }
+    setLoading(false);
   };
 
-  const handleEditOrder = (orderId: string) => {
-    console.log("[v0] Editing order:", orderId);
-    // Here you would typically open an edit modal
-    alert(`Modifier la commande ${orderId}`);
-  };
-
-  const handleDeleteOrder = (orderId: string) => {
-    console.log("[v0] Deleting order:", orderId);
-    if (confirm(`Êtes-vous sûr de vouloir supprimer la commande ${orderId}?`)) {
-      setOrdersData((prev) => prev.filter((order) => order.id !== orderId));
+  const handleViewOrder = (orderId: number) => {
+    const order = ordersData.find((o) => o.id === orderId);
+    if (order) {
+      alert(JSON.stringify(order, null, 2));
     }
   };
 
-  const handleStatusChange = (orderId: string, newStatus: string) => {
-    console.log("[v0] Changing status for order:", orderId, "to:", newStatus);
-    setOrdersData((prev) =>
-      prev.map((order) =>
-        order.id === orderId ? { ...order, status: newStatus } : order
-      )
-    );
+  const handleEditOrder = (orderId: number) => {
+    alert(`Modifier la commande ${orderId}`);
+  };
+
+  const handleDeleteOrder = async (orderId: number) => {
+    if (
+      confirm(`Êtes-vous sûr de vouloir supprimer la commande #${orderId}?`)
+    ) {
+      const result = await deleteOrder(orderId);
+      if (result.success) {
+        // Reload current page and refresh stats
+        loadOrders(currentPage, pageSize);
+        refreshStats(); // Refresh stats immediately
+        alert("Commande supprimée avec succès");
+      } else {
+        alert("Erreur lors de la suppression");
+      }
+    }
+  };
+
+  const handleStatusChange = async (orderId: number, newStatus: string) => {
+    const result = await updateOrderStatus(orderId, newStatus);
+    if (result.success) {
+      // Update local state
+      setOrdersData((prev) =>
+        prev.map((order) =>
+          order.id === orderId ? { ...order, status: newStatus } : order
+        )
+      );
+      // Refresh stats immediately
+      refreshStats();
+    } else {
+      alert("Erreur lors de la mise à jour du statut");
+    }
   };
 
   const filteredOrders = ordersData.filter((order) => {
     const matchesSearch =
-      order.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.id.toLowerCase().includes(searchTerm.toLowerCase());
+      order.client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.id.toString().includes(searchTerm);
     const matchesStatus =
       statusFilter === "tous" || order.status === statusFilter;
-    const matchesZone = zoneFilter === "toutes" || order.zone === zoneFilter;
+    const matchesZone =
+      zoneFilter === "toutes" ||
+      (order.delivery?.zone && order.delivery.zone === zoneFilter);
 
     return matchesSearch && matchesStatus && matchesZone;
   });
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  const handlePageSizeChange = (newSize: string) => {
+    setPageSize(Number(newSize));
+    setCurrentPage(1);
+  };
+
+  if (loading) {
+    return (
+      <Card className="bg-card border-border">
+        <CardContent className="py-8">
+          <div className="text-center text-muted-foreground">
+            Chargement des commandes...
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="bg-card border-border">
       <CardHeader>
         <CardTitle className="text-card-foreground">
-          Gestion des Commandes
+          Gestion des Commandes ({totalCount} total)
         </CardTitle>
         <div className="flex flex-col sm:flex-row gap-4 mt-4">
           <div className="relative flex-1">
@@ -163,9 +204,9 @@ export function OrdersTable() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="tous">Tous les Statuts</SelectItem>
-              <SelectItem value="en attente">En Attente</SelectItem>
-              <SelectItem value="livré">Livré</SelectItem>
-              <SelectItem value="annulé">Annulé</SelectItem>
+              <SelectItem value="pending">En Attente</SelectItem>
+              <SelectItem value="delivered">Livré</SelectItem>
+              <SelectItem value="cancelled">Annulé</SelectItem>
             </SelectContent>
           </Select>
           <Select value={zoneFilter} onValueChange={setZoneFilter}>
@@ -174,8 +215,8 @@ export function OrdersTable() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="toutes">Toutes les Zones</SelectItem>
-              <SelectItem value="Rabat">Rabat</SelectItem>
-              <SelectItem value="Hors Rabat">Hors Rabat</SelectItem>
+              <SelectItem value="rabat">Rabat</SelectItem>
+              <SelectItem value="outside">Hors Rabat</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -185,9 +226,7 @@ export function OrdersTable() {
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/50">
-                <TableHead className="text-card-foreground">
-                  ID Commande
-                </TableHead>
+                <TableHead className="text-card-foreground">ID</TableHead>
                 <TableHead className="text-card-foreground">Client</TableHead>
                 <TableHead className="text-card-foreground">
                   Téléphone
@@ -196,9 +235,7 @@ export function OrdersTable() {
                 <TableHead className="text-card-foreground">Zone</TableHead>
                 <TableHead className="text-card-foreground">Qté</TableHead>
                 <TableHead className="text-card-foreground">Taille</TableHead>
-                <TableHead className="text-card-foreground">
-                  Livraison
-                </TableHead>
+                <TableHead className="text-card-foreground">Horaire</TableHead>
                 <TableHead className="text-card-foreground">Prix</TableHead>
                 <TableHead className="text-card-foreground">Statut</TableHead>
                 <TableHead className="text-card-foreground">Actions</TableHead>
@@ -208,43 +245,56 @@ export function OrdersTable() {
               {filteredOrders.map((order) => (
                 <TableRow key={order.id} className="hover:bg-muted/30">
                   <TableCell className="font-medium text-card-foreground">
-                    {order.id}
+                    #{order.id}
                   </TableCell>
                   <TableCell className="text-card-foreground">
-                    {order.clientName}
+                    {order.client.name}
                   </TableCell>
                   <TableCell className="text-card-foreground">
-                    {order.phone}
+                    {order.client.phoneNumber}
                   </TableCell>
                   <TableCell
                     className="text-card-foreground max-w-[200px] truncate"
-                    title={order.address}
+                    title={order.client.address || "N/A"}
                   >
-                    {order.address}
+                    {order.client.address || "N/A"}
                   </TableCell>
                   <TableCell className="text-card-foreground">
-                    <Badge
-                      variant={order.zone === "Rabat" ? "default" : "secondary"}
-                    >
-                      {order.zone}
-                    </Badge>
+                    {order.delivery?.zone ? (
+                      <Badge
+                        variant={
+                          order.delivery.zone === "rabat"
+                            ? "default"
+                            : "secondary"
+                        }
+                      >
+                        {order.delivery.zone === "rabat"
+                          ? "Rabat"
+                          : "Hors Rabat"}
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline">Récupération</Badge>
+                    )}
                   </TableCell>
                   <TableCell className="text-card-foreground">
-                    {order.quantity}
+                    {order.quantity} Kg
                   </TableCell>
                   <TableCell className="text-card-foreground">
-                    {order.size}
+                    {order.isBig ? "Grand" : "Petit"}
                   </TableCell>
-                  <TableCell className="text-card-foreground">
-                    <div className="text-sm">
-                      <div>{order.deliveryDate}</div>
-                      <div className="text-muted-foreground">
-                        {order.deliveryTime}
-                      </div>
-                    </div>
+                  <TableCell className="text-card-foreground text-sm">
+                    {order.delivery?.timeSlot
+                      ? timeSlotLabels[
+                          order.delivery.timeSlot as keyof typeof timeSlotLabels
+                        ]
+                      : "N/A"}
                   </TableCell>
                   <TableCell className="text-card-foreground font-medium">
-                    {order.price} MAD
+                    {order.totalCost
+                      ? `${(
+                          order.totalCost + (order.delivery?.fees || 0)
+                        ).toFixed(2)} MAD`
+                      : "N/A"}
                   </TableCell>
                   <TableCell>
                     <Select
@@ -261,20 +311,23 @@ export function OrdersTable() {
                             ]
                           }
                         >
-                          {order.status.charAt(0).toUpperCase() +
-                            order.status.slice(1)}
+                          {
+                            statusLabels[
+                              order.status as keyof typeof statusLabels
+                            ]
+                          }
                         </Badge>
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="en attente">En Attente</SelectItem>
-                        <SelectItem value="livré">Livré</SelectItem>
-                        <SelectItem value="annulé">Annulé</SelectItem>
+                        <SelectItem value="pending">En Attente</SelectItem>
+                        <SelectItem value="delivered">Livré</SelectItem>
+                        <SelectItem value="cancelled">Annulé</SelectItem>
                       </SelectContent>
                     </Select>
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Button
+                      {/* <Button
                         variant="ghost"
                         size="sm"
                         className="h-8 w-8 p-0"
@@ -289,7 +342,7 @@ export function OrdersTable() {
                         onClick={() => handleEditOrder(order.id)}
                       >
                         <Edit className="h-4 w-4" />
-                      </Button>
+                      </Button> */}
                       <Button
                         variant="ghost"
                         size="sm"
@@ -310,6 +363,53 @@ export function OrdersTable() {
             Aucune commande trouvée correspondant à vos critères.
           </div>
         )}
+
+        {/* Pagination Controls */}
+        <div className="flex items-center justify-between mt-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">
+              Afficher par page:
+            </span>
+            <Select
+              value={pageSize.toString()}
+              onValueChange={handlePageSizeChange}
+            >
+              <SelectTrigger className="w-[100px] bg-input border-border">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="5">5</SelectItem>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="20">20</SelectItem>
+                <SelectItem value="50">50</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">
+              Page {currentPage} sur {totalPages}
+            </span>
+            <div className="flex gap-1">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

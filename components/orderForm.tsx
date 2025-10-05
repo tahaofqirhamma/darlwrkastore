@@ -24,11 +24,11 @@ export function OrderForm({ t, currentLanguage }: OrderFormProps) {
       address: "",
       isBig: true,
       quantity: 1,
-      estimatedDate: new Date().toString(),
       isDelivery: false,
       zone: "",
       totalCost: 0.0,
       fees: 0.0,
+      timeSlot: "",
     },
   });
 
@@ -172,7 +172,7 @@ export function OrderForm({ t, currentLanguage }: OrderFormProps) {
             </div>
 
             {/* Delivery Date */}
-            <div>
+            {/* <div>
               <label className="block text-foreground font-semibold mb-2 text-sm">
                 {t.dateLabel}
               </label>
@@ -189,6 +189,21 @@ export function OrderForm({ t, currentLanguage }: OrderFormProps) {
                   {errors.estimatedDate.message}
                 </span>
               )}
+            </div> */}
+            <div>
+              <label className="block text-foreground font-semibold mb-2 text-sm">
+                {t.dateLabel}
+              </label>
+              <select
+                {...register("timeSlot", { required: true })}
+                className="bg-input border-2 border-border w-full px-4 py-3 rounded-lg"
+              >
+                <option value={t.timeSlotMorning}>{t.timeSlotMorning}</option>
+                <option value={t.timeSlotAfternoon}>
+                  {t.timeSlotAfternoon}
+                </option>
+                <option value={t.timeSlotEvening}>{t.timeSlotEvening}</option>
+              </select>
             </div>
 
             {/* Delivery Type */}

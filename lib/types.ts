@@ -44,6 +44,9 @@ export interface Translation {
   quantityOptions: string[];
   dateLabel: string;
   timeLabel: string;
+  timeSlotMorning: string;
+  timeSlotAfternoon: string;
+  timeSlotEvening: string;
 
   // Footer
   footerDescription: string;
