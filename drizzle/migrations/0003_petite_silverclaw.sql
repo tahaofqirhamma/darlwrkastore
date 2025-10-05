@@ -1,0 +1,1 @@
+ALTER TABLE "delivery" RENAME COLUMN "time_slote" TO "time_slot";

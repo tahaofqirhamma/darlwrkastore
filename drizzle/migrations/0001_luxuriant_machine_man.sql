@@ -1,0 +1,1 @@
+ALTER TABLE "delivery" ADD COLUMN "time_slote" text;

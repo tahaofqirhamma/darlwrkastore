@@ -45,6 +45,10 @@ export const translations: Record<"ar" | "fr", Translation> = {
     quantityOptions: ["1 كيلو", "2 كيلو", "3 كيلو", "5 كيلو", "10 كيلو"],
     dateLabel: "تاريخ التوصيل",
     timeLabel: "وقت التوصيل",
+    timeSlotLabel: "وقت التسليم",
+    timeSlotMorning: "صباحاً (08:00 - 12:00)",
+    timeSlotAfternoon: "بعد الظهر (12:00 - 16:00)",
+    timeSlotEvening: "مساءً (16:00 - 18:00)",
 
     // Footer
     footerDescription:
@@ -106,6 +110,10 @@ export const translations: Record<"ar" | "fr", Translation> = {
     quantityOptions: ["1 kg", "2 kg", "3 kg", "5 kg", "10 kg"],
     dateLabel: "Date de livraison",
     timeLabel: "Heure de livraison",
+    timeSlotLabel: "Horaire de livraison",
+    timeSlotMorning: "Matin (08h00 - 12h00)",
+    timeSlotAfternoon: "Après-midi (12h00 - 16h00)",
+    timeSlotEvening: "Soir (16h00 - 18h00)",
 
     // Footer
     footerDescription:

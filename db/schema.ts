@@ -43,6 +43,7 @@ export const client = pgTable("client", {
   address: text(),
 });
 
+// In schema.ts
 export const delivery = pgTable(
   "delivery",
   {
@@ -50,7 +51,7 @@ export const delivery = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
       .defaultNow()
       .notNull(),
-    estimatedDate: date("estimated_date"),
+    timeSlot: text("time_slot"), // Changed from "time_slote"
     fees: real("fees").default(sql`'0'`),
     zone: text("zone"),
     orderId: integer("order_id"),
@@ -74,6 +75,13 @@ export const ordersRelations = relations(order, ({ one }) => ({
 
 export const clientRelation = relations(client, ({ many }) => ({
   orders: many(order),
+}));
+
+export const deliveryRelations = relations(delivery, ({ one }) => ({
+  order: one(order, {
+    fields: [delivery.orderId],
+    references: [order.id],
+  }),
 }));
 
 export type InsertClient = typeof client.$inferInsert;

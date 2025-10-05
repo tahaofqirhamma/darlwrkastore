@@ -1,0 +1,1 @@
+ALTER TABLE "delivery" DROP COLUMN "estimated_date";

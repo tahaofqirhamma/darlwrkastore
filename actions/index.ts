@@ -68,30 +68,18 @@ export const placeOrder = async (data: PlaceOrderDTO) => {
     // For delivery orders
     await db.insert(delivery).values({
       zone: validatedData.zone,
-      estimatedDate: validatedData.estimatedDate,
       orderId: newOrder.id,
       fees: deliveryFees,
+      timeSlot: validatedData.timeSlot,
     });
   } else {
     // For pickup orders
     await db.insert(delivery).values({
-      estimatedDate: validatedData.estimatedDate,
       orderId: newOrder.id,
       fees: 0,
+      timeSlot: validatedData.timeSlot,
     });
   }
-
-  const formattedDate = new Date(validatedData.estimatedDate).toLocaleString(
-    "fr-FR",
-    {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    }
-  );
 
   const clientMessage = `
 
@@ -109,7 +97,7 @@ export const placeOrder = async (data: PlaceOrderDTO) => {
 📏 Taille              : ${validatedData.isBig ? "Grande" : "Petite"}
 🚚 Livraison           : ${validatedData.isDelivery ? "Oui" : "Non"}
 📍 Zone                : ${validatedData.zone ?? "N/A"}
-📅 Date estimée        : ${formattedDate}
+📅 Date estimée        : ${validatedData.timeSlot}
 
 ═══════════════════════════════════════════════════════
 💰 Montant des articles : ${subtotal.toFixed(2)} MAD

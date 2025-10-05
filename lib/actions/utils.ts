@@ -6,7 +6,7 @@ export const placeOrderSchema = z.object({
   address: z.string().optional(),
   isBig: z.boolean(),
   quantity: z.number().int().positive(),
-  estimatedDate: z.date().transform((date) => date.toISOString()),
+  timeSlot: z.string(),
   isDelivery: z.coerce.boolean(),
   zone: z.string().optional(),
   totalCost: z.number(),
