@@ -159,6 +159,8 @@ export function OrdersTable() {
     return matchesSearch && matchesStatus && matchesZone;
   });
 
+  console.log(ordersData.map((order) => order.delivery?.timeSlot));
+
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
@@ -283,11 +285,7 @@ export function OrdersTable() {
                     {order.isBig ? "Grand" : "Petit"}
                   </TableCell>
                   <TableCell className="text-card-foreground text-sm">
-                    {order.delivery?.timeSlot
-                      ? timeSlotLabels[
-                          order.delivery.timeSlot as keyof typeof timeSlotLabels
-                        ]
-                      : "N/A"}
+                    {order.delivery?.timeSlot ? order.delivery.timeSlot : "N/A"}
                   </TableCell>
                   <TableCell className="text-card-foreground font-medium">
                     {order.totalCost

@@ -102,15 +102,14 @@ export const placeOrder = async (data: PlaceOrderDTO) => {
 ═══════════════════════════════════════════════════════
 💰 Montant des articles : ${subtotal.toFixed(2)} MAD
 🚚 Frais de livraison   : ${
-    validatedData.isDelivery ? validatedData.fees.toFixed(2) : 0.0
+    validatedData.isDelivery ? validatedData.fees.toFixed(2) : "0.00"
   } MAD
 
 ═══════════════════════════════════════════════════════
-💵 TOTAL : ${
-    Number(validatedData.totalCost).toFixed(2) +
-    (validatedData.isDelivery ? Number(validatedData.fees).toFixed(2) : 0.0)
-  } MAD
-
+💵 TOTAL : ${(
+    Number(validatedData.totalCost) +
+    (validatedData.isDelivery ? Number(validatedData.fees) : 0)
+  ).toFixed(2)} MAD
 ═══════════════════════════════════════════════════════
 
 ✨ Merci de votre confiance !
@@ -132,7 +131,7 @@ export const placeOrder = async (data: PlaceOrderDTO) => {
       from_name: "Dar Lwrka",
       subject: "Dar Lwrka - Nouvelle commande",
       message: clientMessage,
-      format: "html",
+      format: "text",
     }),
   });
 
