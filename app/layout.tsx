@@ -36,6 +36,10 @@ export const metadata: Metadata = {
     "pâte à bastilla",
     "bastilla artisanale",
     "ورقة جاهزة للبسطيلة",
+    "wrkat lbastilla",
+    "bastilla",
+    "briwat",
+    "البسطيلة",
   ],
   authors: [{ name: "دار ورقة البسطيلة" }],
   robots: {
