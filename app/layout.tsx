@@ -21,10 +21,51 @@ const amiri = Amiri({
 });
 
 export const metadata: Metadata = {
-  title: "Dar Lwrka - دار الورقة | Feuilles de Bastilla",
+  title: "دار ورقة البسطيلة | Feuilles de Bastilla Marocaines Artisanales",
   description:
-    "Feuilles de bastilla traditionnelles fabriquées à la main avec les meilleurs ingrédients naturels",
-  generator: "v0.app",
+    "دار ورقة البسطيلة – ورقة البسطيلة المغربية الأصيلة. Feuilles de bastilla artisanales faites à la main, Livraison partout au Maroc.",
+  keywords: [
+    "دار ورقة البسطيلة",
+    "ورقة البسطيلة",
+    "ورقة البسطيلة مغربية",
+    "feuilles de bastilla",
+    "feuilles de bastilla marocaines",
+    "achat feuilles de bastilla",
+    "livraison bastilla",
+    "warqa maroc",
+    "pâte à bastilla",
+    "bastilla artisanale",
+    "ورقة جاهزة للبسطيلة",
+  ],
+  authors: [{ name: "دار ورقة البسطيلة" }],
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    type: "website",
+    url: "https://darlwrka.ma/",
+    title: "دار ورقة البسطيلة | Feuilles de Bastilla Marocaines",
+    description:
+      "Découvrez les feuilles de bastilla artisanales de دار ورقة البسطيلة – fines, traditionnelles et prêtes à l’emploi. Livraison rapide au Maroc.",
+    siteName: "دار ورقة البسطيلة",
+
+    locale: "fr_MA",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "دار ورقة البسطيلة | Feuilles de Bastilla Marocaines",
+    description:
+      "Feuilles de bastilla artisanales marocaines — tradition, goût et qualité. Commandez dès maintenant sur دار ورقة البسطيلة.",
+    images: ["https://darlwrka.ma/assets/og-banner.jpg"],
+  },
+  alternates: {
+    canonical: "https://darlwrka.ma/",
+  },
+  icons: {
+    icon: "/favicon.png",
+  },
+  metadataBase: new URL("https://darlwrka.ma"),
 };
 
 export default function RootLayout({
