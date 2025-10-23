@@ -29,6 +29,13 @@
       "when": 1759579984774,
       "tag": "0003_petite_silverclaw",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1761200280679,
+      "tag": "0004_spicy_doctor_faustus",
+      "breakpoints": true
     }
   ]
 }

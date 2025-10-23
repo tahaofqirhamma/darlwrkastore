@@ -49,6 +49,7 @@ type OrderData = {
     zone: string | null;
     fees: number | null;
     timeSlot: string | null;
+    date: string | null;
   } | null;
 };
 
@@ -62,12 +63,6 @@ const statusLabels = {
   pending: "En Attente",
   delivered: "Livré",
   cancelled: "Annulé",
-};
-
-const timeSlotLabels = {
-  morning: "Matin (08h-12h)",
-  afternoon: "Après-midi (12h-16h)",
-  evening: "Soir (16h-20h)",
 };
 
 export function OrdersTable() {
@@ -183,7 +178,7 @@ export function OrdersTable() {
       </Card>
     );
   }
-
+  console.log(filteredOrders.map((order) => order.delivery?.date));
   return (
     <Card className="bg-card border-border">
       <CardHeader>
@@ -237,6 +232,7 @@ export function OrdersTable() {
                 <TableHead className="text-card-foreground">Zone</TableHead>
                 <TableHead className="text-card-foreground">Qté</TableHead>
                 <TableHead className="text-card-foreground">Taille</TableHead>
+                <TableHead className="text-card-foreground">Date</TableHead>
                 <TableHead className="text-card-foreground">Horaire</TableHead>
                 <TableHead className="text-card-foreground">Prix</TableHead>
                 <TableHead className="text-card-foreground">Statut</TableHead>
@@ -283,6 +279,9 @@ export function OrdersTable() {
                   </TableCell>
                   <TableCell className="text-card-foreground">
                     {order.isBig ? "Grand" : "Petit"}
+                  </TableCell>
+                  <TableCell className="text-card-foreground text-sm">
+                    {order.delivery?.date}
                   </TableCell>
                   <TableCell className="text-card-foreground text-sm">
                     {order.delivery?.timeSlot ? order.delivery.timeSlot : "N/A"}

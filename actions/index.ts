@@ -71,6 +71,7 @@ export const placeOrder = async (data: PlaceOrderDTO) => {
       orderId: newOrder.id,
       fees: deliveryFees,
       timeSlot: validatedData.timeSlot,
+      date: validatedData.date.toISOString(),
     });
   } else {
     // For pickup orders
@@ -78,6 +79,7 @@ export const placeOrder = async (data: PlaceOrderDTO) => {
       orderId: newOrder.id,
       fees: 0,
       timeSlot: validatedData.timeSlot,
+      date: validatedData.date.toISOString(),
     });
   }
 
@@ -97,7 +99,10 @@ export const placeOrder = async (data: PlaceOrderDTO) => {
 📏 Taille              : ${validatedData.isBig ? "Grande" : "Petite"}
 🚚 Livraison           : ${validatedData.isDelivery ? "Oui" : "Non"}
 📍 Zone                : ${validatedData.zone ?? "N/A"}
-📅 Date estimée        : ${validatedData.timeSlot}
+📅 Date                : ${
+    validatedData.date.toISOString().split("T")[0] ?? "N/A"
+  }
+📅 Temps estimée       : ${validatedData.timeSlot}
 
 ═══════════════════════════════════════════════════════
 💰 Montant des articles : ${subtotal.toFixed(2)} MAD

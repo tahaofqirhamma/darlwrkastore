@@ -23,6 +23,7 @@ export const order = pgTable(
     totalCost: doublePrecision("total_cost"),
     clientId: integer("client_id").notNull(),
     deliveryId: integer("delivery_id"),
+    date: date("date"),
   },
   (table) => [
     foreignKey({
@@ -54,6 +55,7 @@ export const delivery = pgTable(
     timeSlot: text("time_slot"), // Changed from "time_slote"
     fees: real("fees").default(sql`'0'`),
     zone: text("zone"),
+    date: date("date"),
     orderId: integer("order_id"),
   },
   (table) => [
