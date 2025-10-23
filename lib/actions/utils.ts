@@ -11,6 +11,7 @@ export const placeOrderSchema = z.object({
   zone: z.string().optional(),
   totalCost: z.number(),
   fees: z.number(),
+  date: z.date(), // safely converts a Date or number into a string
 });
 
 export type PlaceOrderDTO = z.infer<typeof placeOrderSchema>;

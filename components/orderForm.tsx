@@ -29,6 +29,7 @@ export function OrderForm({ t, currentLanguage }: OrderFormProps) {
       totalCost: 0.0,
       fees: 0.0,
       timeSlot: "",
+      date: new Date(),
     },
   });
 
@@ -55,7 +56,6 @@ export function OrderForm({ t, currentLanguage }: OrderFormProps) {
     // Update form values
     setValue("fees", deliveryFee);
     setValue("totalCost", total);
-
     // Update display
     setTotalCostDisplay(`${total.toFixed(2)} ${t.currency}`);
   }, [isBig, quantity, isDelivery, zone, t.currency, setValue]);
@@ -172,24 +172,25 @@ export function OrderForm({ t, currentLanguage }: OrderFormProps) {
             </div>
 
             {/* Delivery Date */}
-            {/* <div>
+            <div>
               <label className="block text-foreground font-semibold mb-2 text-sm">
                 {t.dateLabel}
               </label>
               <input
-                type="datetime-local"
-                {...register("estimatedDate", {
-                  required: true,
+                type="date"
+                {...register("date", {
+                  required: "Delivery date is required",
                   valueAsDate: true,
                 })}
                 className="bg-input border-2 border-border w-full px-4 py-3 rounded-lg"
               />
-              {errors.estimatedDate && (
+              {errors.date && (
                 <span className="text-red-500 text-sm">
-                  {errors.estimatedDate.message}
+                  {errors.date.message}
                 </span>
               )}
-            </div> */}
+            </div>
+
             <div>
               <label className="block text-foreground font-semibold mb-2 text-sm">
                 {t.dateLabel}
