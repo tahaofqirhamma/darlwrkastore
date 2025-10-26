@@ -121,7 +121,7 @@ export const translations: Record<"ar" | "fr", Translation> = {
     contactTitle: "Nous Contacter",
     location: "Rue Al Izdihar, Amal 4, Rabat",
     phone: "+212668102047",
-    email: "contact@darlwrka.ma",
+    email: "",
     hours: "Lun-Sam: 8h-20h",
     copyright: "Tous droits réservés",
     terms: "Conditions",
