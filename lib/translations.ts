@@ -120,7 +120,7 @@ export const translations: Record<"ar" | "fr", Translation> = {
       "Feuilles de bastilla traditionnelles fabriquées à la main avec les meilleurs ingrédients naturels",
     contactTitle: "Nous Contacter",
     location: "Rue Al Izdihar, Amal 4, Rabat",
-    phone: "+212 5XX XXX XXX",
+    phone: "+212668102047",
     email: "contact@darlwrka.ma",
     hours: "Lun-Sam: 8h-20h",
     copyright: "Tous droits réservés",
