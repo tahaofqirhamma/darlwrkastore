@@ -38,8 +38,20 @@ export function Footer({ t, currentLanguage }: FooterProps) {
             {t.contactTitle}
           </h5>
           <div className="space-y-2 text-sm text-background/70">
-            <p>📍 {t.location}</p>
-            <p>📞 {t.phone}</p>
+            <p>
+              📍{" "}
+              <a
+                href="https://maps.app.goo.gl/bE71EuTUUuq3Hq1e8"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {t.location}
+              </a>
+            </p>
+            <p>
+              📞 <a href={`tel:${t.phone}`}>{t.phone}</a>
+            </p>
+
             <p>✉️ {t.email}</p>
             <p>🕒 {t.hours}</p>
           </div>
