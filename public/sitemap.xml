@@ -9,35 +9,5 @@
     <priority>1.0</priority>
   </url>
 
-  <!-- Products/Shop -->
-  <url>
-    <loc>https://darlwrka-bastilla.ma/products</loc>
-    <lastmod>2025-10-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
 
-  <!-- About -->
-  <url>
-    <loc>https://darlwrka-bastilla.ma/about</loc>
-    <lastmod>2025-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- Contact -->
-  <url>
-    <loc>https://darlwrka-bastilla.ma/contact</loc>
-    <lastmod>2025-10-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- Order Page -->
-  <url>
-    <loc>https://darlwrka-bastilla.ma/order</loc>
-    <lastmod>2025-10-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
 </urlset>
