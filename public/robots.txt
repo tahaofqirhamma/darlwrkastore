@@ -1,0 +1,14 @@
+# Allow all search engines to crawl the site
+User-agent: *
+Allow: /
+
+# Disallow admin and private routes
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://darlwrka-bastilla.ma/sitemap.xml
+
+# Crawl delay (optional - prevents server overload)
+Crawl-delay: 1
