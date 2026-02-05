@@ -1,5 +1,5 @@
 {
-  "id": "58ec2140-56f6-4211-a9e4-53afdc0f3eac",
+  "id": "9cb17b67-35e0-4b91-b08a-3b929cee0652",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -87,9 +87,9 @@
           "notNull": true,
           "default": "now()"
         },
-        "estimated_date": {
-          "name": "estimated_date",
-          "type": "date",
+        "time_slot": {
+          "name": "time_slot",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
@@ -103,6 +103,12 @@
         "zone": {
           "name": "zone",
           "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date": {
+          "name": "date",
+          "type": "date",
           "primaryKey": false,
           "notNull": false
         },
@@ -204,6 +210,12 @@
         "delivery_id": {
           "name": "delivery_id",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date": {
+          "name": "date",
+          "type": "date",
           "primaryKey": false,
           "notNull": false
         }

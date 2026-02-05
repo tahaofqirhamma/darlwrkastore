@@ -52,8 +52,6 @@ export const placeOrder = async (data: PlaceOrderDTO) => {
         ? DELIVERY_FEE_RABAT
         : DELIVERY_FEE_OUTSIDE;
   }
-  console.log(subtotal);
-
   const [newOrder] = await db
     .insert(order)
     .values({
@@ -64,22 +62,25 @@ export const placeOrder = async (data: PlaceOrderDTO) => {
       totalCost: subtotal,
     })
     .returning();
+  const dateOnly =
+    validatedData.date instanceof Date
+      ? validatedData.date.toISOString().split("T")[0]
+      : String(validatedData.date).slice(0, 10);
+
   if (validatedData.isDelivery && validatedData.zone) {
-    // For delivery orders
     await db.insert(delivery).values({
       zone: validatedData.zone,
       orderId: newOrder.id,
       fees: deliveryFees,
       timeSlot: validatedData.timeSlot,
-      date: validatedData.date.toISOString(),
+      date: dateOnly,
     });
   } else {
-    // For pickup orders
     await db.insert(delivery).values({
       orderId: newOrder.id,
       fees: 0,
       timeSlot: validatedData.timeSlot,
-      date: validatedData.date.toISOString(),
+      date: dateOnly,
     });
   }
 
@@ -139,9 +140,6 @@ export const placeOrder = async (data: PlaceOrderDTO) => {
       format: "text",
     }),
   });
-
-  console.log(validatedData.fees);
-  console.log(validatedData.totalCost);
 
   return { msg: "Order created successfully", type: "success" };
 };

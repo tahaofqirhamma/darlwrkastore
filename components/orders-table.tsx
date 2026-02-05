@@ -154,8 +154,6 @@ export function OrdersTable() {
     return matchesSearch && matchesStatus && matchesZone;
   });
 
-  console.log(ordersData.map((order) => order.delivery?.timeSlot));
-
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
@@ -178,7 +176,6 @@ export function OrdersTable() {
       </Card>
     );
   }
-  console.log(filteredOrders.map((order) => order.delivery?.date));
   return (
     <Card className="bg-card border-border">
       <CardHeader>

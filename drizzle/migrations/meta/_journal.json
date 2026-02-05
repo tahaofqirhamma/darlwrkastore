@@ -5,36 +5,15 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1758543788910,
-      "tag": "0000_bitter_nighthawk",
+      "when": 1770305593525,
+      "tag": "0000_flowery_drax",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1759578562967,
-      "tag": "0001_luxuriant_machine_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1759578679201,
-      "tag": "0002_material_whistler",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1759579984774,
-      "tag": "0003_petite_silverclaw",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1761200280679,
-      "tag": "0004_spicy_doctor_faustus",
+      "when": 1770305600000,
+      "tag": "0001_fix_order_fk_to_app_users",
       "breakpoints": true
     }
   ]

@@ -10,6 +10,9 @@
 # production
 /build
 
+# temp / scratch
+_tmp_*
+
 # debug
 npm-debug.log*
 yarn-debug.log*

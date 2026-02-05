@@ -1,4 +1,3 @@
-import { login, signup } from "./actions";
 import {
   Card,
   CardContent,
@@ -11,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import Logo from "@/public/assets/logo_light.svg";
 import Image from "next/image";
+
 export default function LoginPage() {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -25,7 +25,7 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <form className="space-y-4">
+          <form action="/api/login" method="POST" className="space-y-4">
             <div className="space-y-2">
               <Label
                 htmlFor="email"
@@ -62,7 +62,7 @@ export default function LoginPage() {
 
             <div className="space-y-3 pt-4">
               <Button
-                formAction={login}
+                type="submit"
                 className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium py-3 rounded-lg transition-colors shadow-sm"
               >
                 Se connecter

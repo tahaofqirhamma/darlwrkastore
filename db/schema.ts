@@ -34,7 +34,7 @@ export const order = pgTable(
   ]
 );
 
-export const client = pgTable("client", {
+export const client = pgTable("AppUsers", {
   id: integer().generatedAlwaysAsIdentity().primaryKey(),
   createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
     .defaultNow()
@@ -68,10 +68,13 @@ export const delivery = pgTable(
 );
 
 export const ordersRelations = relations(order, ({ one }) => ({
-  delivery: one(delivery),
   client: one(client, {
     fields: [order.clientId],
     references: [client.id],
+  }),
+  delivery: one(delivery, {
+    fields: [order.id],
+    references: [delivery.orderId],
   }),
 }));
 

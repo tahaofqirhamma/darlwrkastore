@@ -1,20 +1,21 @@
-import { type NextRequest } from "next/server";
-import { updateSession } from "@/utils/supabase/middleware";
+import { NextRequest, NextResponse } from "next/server";
+import { verifyAdminCookie, ADMIN_COOKIE_NAME } from "@/lib/simple-auth-edge";
 
 export async function middleware(request: NextRequest) {
-  return await updateSession(request);
+  if (!request.nextUrl.pathname.startsWith("/admin")) {
+    return NextResponse.next();
+  }
+
+  const cookieValue = request.cookies.get(ADMIN_COOKIE_NAME)?.value;
+  if (!verifyAdminCookie(cookieValue)) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * Feel free to modify this pattern to include more paths.
-     * ["/admin/:path*"],
-     */
-    "/admin/:path*",
-  ],
+  matcher: ["/admin/:path*"],
 };
