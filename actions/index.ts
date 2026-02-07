@@ -17,6 +17,7 @@ const DELIVERY_FEE_OUTSIDE = 25.0;
 // Server Action
 // --------------------
 export const placeOrder = async (data: PlaceOrderDTO) => {
+  console.log("[placeOrder] received", { name: data.name, phone: data.phoneNumber, quantity: data.quantity });
   // Validate DTO
   const validatedData = placeOrderSchema.parse(data);
 
@@ -84,6 +85,8 @@ export const placeOrder = async (data: PlaceOrderDTO) => {
     });
   }
 
+  console.log("[placeOrder] order created", { orderId: newOrder.id, totalCost: subtotal });
+
   const clientMessage = `
 
 ═══════════════════════════════════════════════════════
@@ -127,19 +130,11 @@ export const placeOrder = async (data: PlaceOrderDTO) => {
 
 `;
 
-  await fetch("https://api.web3forms.com/submit", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      access_key: process.env.WEB3FORM_API_KEY,
-      from_name: "Dar Lwrka",
-      subject: "Dar Lwrka - Nouvelle commande",
-      message: clientMessage,
-      format: "text",
-    }),
-  });
-
-  return { msg: "Order created successfully", type: "success" };
+  // Web3Forms is called from the client (browser) to avoid 403 - server-side requires paid plan + IP whitelist
+  console.log("[placeOrder] returning success with emailBody");
+  return {
+    msg: "Order created successfully",
+    type: "success",
+    emailBody: clientMessage,
+  };
 };

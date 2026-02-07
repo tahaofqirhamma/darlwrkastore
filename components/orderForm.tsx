@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { placeOrder } from "@/actions";
 import { Language, Translation } from "@/lib/types";
 import { PlaceOrderDTO } from "@/lib/actions/utils";
+import { useToast } from "@/hooks/use-toast";
 
 interface OrderFormProps {
   t: Translation;
@@ -10,6 +11,7 @@ interface OrderFormProps {
 }
 
 export function OrderForm({ t, currentLanguage }: OrderFormProps) {
+  const { toast } = useToast();
   const {
     register,
     handleSubmit,
@@ -62,13 +64,51 @@ export function OrderForm({ t, currentLanguage }: OrderFormProps) {
 
   // onSubmit handler
   const onSubmit = async (data: PlaceOrderDTO) => {
+    console.log("[OrderForm] submit", { name: data.name, quantity: data.quantity });
     try {
       const response = await placeOrder(data);
-      alert(response.msg);
+      console.log("[OrderForm] placeOrder ok", response.msg, "emailBody:", !!("emailBody" in response && response.emailBody));
+      // Send order summary email via Web3Forms from client (avoids 403 on free plan)
+      const accessKey = process.env.NEXT_PUBLIC_WEB3FORM_API_KEY;
+      if (accessKey && "emailBody" in response && response.emailBody) {
+        try {
+          console.log("[OrderForm] sending Web3Forms email...");
+          const res = await fetch("https://api.web3forms.com/submit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              access_key: accessKey,
+              from_name: "Dar Lwrka",
+              subject: "Dar Lwrka - Nouvelle commande",
+              message: response.emailBody,
+              format: "text",
+            }),
+          });
+          const json = await res.json().catch(() => ({}));
+          if (res.ok && (json as { success?: boolean }).success !== false) {
+            console.log("[OrderForm] Web3Forms email sent");
+          } else {
+            console.warn("[OrderForm] Web3Forms failed:", res.status, json);
+          }
+        } catch (e) {
+          console.error("[OrderForm] Web3Forms error", e);
+        }
+      } else {
+        console.log("[OrderForm] skip Web3Forms (no key or no emailBody)");
+      }
+      toast({
+        title: t.orderSuccessTitle,
+        description: t.orderSuccess,
+        variant: "default",
+      });
       reset();
     } catch (err) {
-      console.error(err);
-      alert("Failed to place order.");
+      console.error("[OrderForm] placeOrder error", err);
+      toast({
+        title: t.orderFailedTitle,
+        description: t.orderFailed,
+        variant: "destructive",
+      });
     }
   };
 

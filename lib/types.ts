@@ -61,6 +61,9 @@ export interface Translation {
 
   // Messages
   orderSuccess: string;
+  orderFailed: string;
+  orderSuccessTitle: string;
+  orderFailedTitle: string;
   currency: string;
 }
 

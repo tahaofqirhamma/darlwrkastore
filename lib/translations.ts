@@ -64,6 +64,9 @@ export const translations: Record<"ar" | "fr", Translation> = {
 
     // Messages
     orderSuccess: "شكراً لك! تم إرسال طلبك بنجاح.",
+    orderFailed: "حدث خطأ. يرجى المحاولة مرة أخرى أو الاتصال بنا.",
+    orderSuccessTitle: "تم بنجاح",
+    orderFailedTitle: "فشل الطلب",
     currency: "درهم",
   },
   fr: {
@@ -129,6 +132,9 @@ export const translations: Record<"ar" | "fr", Translation> = {
 
     // Messages
     orderSuccess: "Merci ! Votre commande a été envoyée.",
+    orderFailed: "Une erreur s'est produite. Veuillez réessayer ou nous contacter.",
+    orderSuccessTitle: "Succès",
+    orderFailedTitle: "Échec de la commande",
     currency: "MAD",
   },
 };
