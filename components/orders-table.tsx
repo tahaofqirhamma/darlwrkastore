@@ -81,7 +81,7 @@ export function OrdersTable() {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(50);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
 
@@ -138,8 +138,8 @@ export function OrdersTable() {
       // Update local state
       setOrdersData((prev) =>
         prev.map((order) =>
-          order.id === orderId ? { ...order, status: newStatus } : order
-        )
+          order.id === orderId ? { ...order, status: newStatus } : order,
+        ),
       );
       // Refresh stats immediately
       refreshStats();
@@ -322,11 +322,9 @@ export function OrdersTable() {
                             ] ?? "bg-muted text-muted-foreground"
                           }
                         >
-                          {
-                            statusLabels[
-                              order.status as keyof typeof statusLabels
-                            ] ?? order.status
-                          }
+                          {statusLabels[
+                            order.status as keyof typeof statusLabels
+                          ] ?? order.status}
                         </Badge>
                       </SelectTrigger>
                       <SelectContent>
