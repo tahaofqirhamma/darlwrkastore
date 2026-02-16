@@ -28,6 +28,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { fetchOrders, updateOrderStatus, deleteOrder } from "@/actions/admin";
 import { useStats } from "@/contexts/StatsContext";
 
@@ -55,12 +60,14 @@ type OrderData = {
 
 const statusColors = {
   pending: "bg-muted text-muted-foreground",
+  confirmed: "bg-primary/20 text-primary",
   delivered: "bg-accent text-accent-foreground",
   cancelled: "bg-destructive text-destructive-foreground",
 };
 
 const statusLabels = {
   pending: "En Attente",
+  confirmed: "Confirmé",
   delivered: "Livré",
   cancelled: "Annulé",
 };
@@ -199,6 +206,7 @@ export function OrdersTable() {
             <SelectContent>
               <SelectItem value="tous">Tous les Statuts</SelectItem>
               <SelectItem value="pending">En Attente</SelectItem>
+              <SelectItem value="confirmed">Confirmé</SelectItem>
               <SelectItem value="delivered">Livré</SelectItem>
               <SelectItem value="cancelled">Annulé</SelectItem>
             </SelectContent>
@@ -248,11 +256,20 @@ export function OrdersTable() {
                   <TableCell className="text-card-foreground">
                     {order.client.phoneNumber}
                   </TableCell>
-                  <TableCell
-                    className="text-card-foreground max-w-[200px] truncate"
-                    title={order.client.address || "N/A"}
-                  >
-                    {order.client.address || "N/A"}
+                  <TableCell className="text-card-foreground max-w-[200px]">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span className="block truncate cursor-help">
+                          {order.client.address || "N/A"}
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side="top"
+                        className="max-w-[320px] whitespace-normal text-left"
+                      >
+                        {order.client.address || "N/A"}
+                      </TooltipContent>
+                    </Tooltip>
                   </TableCell>
                   <TableCell className="text-card-foreground">
                     {order.delivery?.zone ? (
@@ -302,18 +319,19 @@ export function OrdersTable() {
                           className={
                             statusColors[
                               order.status as keyof typeof statusColors
-                            ]
+                            ] ?? "bg-muted text-muted-foreground"
                           }
                         >
                           {
                             statusLabels[
                               order.status as keyof typeof statusLabels
-                            ]
+                            ] ?? order.status
                           }
                         </Badge>
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="pending">En Attente</SelectItem>
+                        <SelectItem value="confirmed">Confirmé</SelectItem>
                         <SelectItem value="delivered">Livré</SelectItem>
                         <SelectItem value="cancelled">Annulé</SelectItem>
                       </SelectContent>
