@@ -7,7 +7,7 @@ import {
   Package,
   XCircle,
   CheckCircle,
-  MapPin,
+  Scale,
   Clock,
 } from "lucide-react";
 import { getDashboardStats } from "@/actions/admin";
@@ -19,7 +19,7 @@ type StatsData = {
   deliveredOrders: number;
   cancelledOrders: number;
   pendingOrders: number;
-  rabatOrders: number;
+  deliveredKgTotal: number;
   revenueChange: string;
   ordersChange: string;
 };
@@ -92,10 +92,10 @@ export function StatsCards() {
       color: "text-destructive",
     },
     {
-      title: "Commandes Rabat",
-      value: stats.rabatOrders.toString(),
+      title: "Kg Livrés",
+      value: `${stats.deliveredKgTotal} kg`,
       change: "+5.7%",
-      icon: MapPin,
+      icon: Scale,
       color: "text-primary",
     },
     {

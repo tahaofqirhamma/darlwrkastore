@@ -171,13 +171,14 @@ export const getDashboardStats = async () => {
       .where(eq(order.status, "pending"));
     const pendingOrders = pendingResult[0].count;
 
-    // Rabat zone orders count (delivered only)
-    const rabatResult = await db
-      .select({ count: count() })
-      .from(delivery)
-      .innerJoin(order, eq(delivery.orderId, order.id))
-      .where(sql`${delivery.zone} = 'rabat' AND ${order.status} = 'delivered'`);
-    const rabatOrders = rabatResult[0].count;
+    // Total kg delivered (sum of quantity for orders with status delivered)
+    const deliveredKgResult = await db
+      .select({
+        totalKg: sql<number>`COALESCE(SUM(${order.quantity}), 0)`,
+      })
+      .from(order)
+      .where(eq(order.status, "delivered"));
+    const deliveredKgTotal = Number(deliveredKgResult[0].totalKg);
 
     // Calculate previous month stats for comparison
     const now = new Date();
@@ -256,7 +257,7 @@ export const getDashboardStats = async () => {
         deliveredOrders,
         cancelledOrders,
         pendingOrders,
-        rabatOrders,
+        deliveredKgTotal,
         revenueChange: revenueChange.toFixed(1),
         ordersChange: ordersChange.toFixed(1),
       },
