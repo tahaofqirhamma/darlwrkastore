@@ -72,10 +72,15 @@ const statusLabels = {
   cancelled: "Annulé",
 };
 
+function formatDateKey(d: Date): string {
+  return d.toISOString().split("T")[0];
+}
+
 export function OrdersTable() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("tous");
   const [zoneFilter, setZoneFilter] = useState("toutes");
+  const [dateFilter, setDateFilter] = useState<string>("");
   const [ordersData, setOrdersData] = useState<OrderData[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -157,8 +162,13 @@ export function OrdersTable() {
     const matchesZone =
       zoneFilter === "toutes" ||
       (order.delivery?.zone && order.delivery.zone === zoneFilter);
+    const deliveryDate = order.delivery?.date
+      ? String(order.delivery.date).slice(0, 10)
+      : null;
+    const matchesDate =
+      !dateFilter || deliveryDate === dateFilter;
 
-    return matchesSearch && matchesStatus && matchesZone;
+    return matchesSearch && matchesStatus && matchesZone && matchesDate;
   });
 
   const handlePageChange = (newPage: number) => {
@@ -221,6 +231,46 @@ export function OrdersTable() {
               <SelectItem value="outside">Hors Rabat</SelectItem>
             </SelectContent>
           </Select>
+          <div className="flex flex-wrap items-center gap-2">
+            <input
+              type="date"
+              value={dateFilter}
+              onChange={(e) => setDateFilter(e.target.value)}
+              className="flex h-10 w-full rounded-md border border-border bg-input px-3 py-2 text-sm text-foreground min-w-[140px]"
+            />
+            <div className="flex gap-1">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setDateFilter(formatDateKey(new Date()))}
+              >
+                Aujourd&apos;hui
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const t = new Date();
+                  t.setDate(t.getDate() + 1);
+                  setDateFilter(formatDateKey(t));
+                }}
+              >
+                Demain
+              </Button>
+              {dateFilter ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setDateFilter("")}
+                >
+                  Toutes les dates
+                </Button>
+              ) : null}
+            </div>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
