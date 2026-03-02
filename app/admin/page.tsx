@@ -15,12 +15,7 @@ export default async function StoreDashboard() {
     <StatsProvider>
       <div className="min-h-screen bg-background">
         <StoreHeader />
-        <div className="flex flex-row justify-end items-center gap-4 w-full mr-10 p-4">
-          <a href="/admin/analytics">
-            <Button variant="outline" size="sm">
-              Analytics v2
-            </Button>
-          </a>
+        <div className="flex flex-row justify-end items-center w-full mr-10 p-4">
           <form action={logout}>
             <Button type="submit">Logout</Button>
           </form>
